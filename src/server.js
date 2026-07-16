@@ -4,9 +4,9 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
-const authRoutes = require("./src/routes");
+const authRoutes = require("./routes");
 const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./src/swagger");
+const swaggerSpec = require("./swagger");
 
 const app = express();
 
