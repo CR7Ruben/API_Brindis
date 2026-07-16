@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { registrar, login, perfil } = require("./controllers");
-const { verificarToken } = require("./middlewares");
+const { registrar, login, perfil, crearUsuarioConRol } = require("./controllers");
+const { verificarToken, verificarAdmin } = require("./middlewares");
 
 /**
  * @swagger
  * /api/auth/registro:
  *   post:
- *     summary: Registra un nuevo usuario
+ *     summary: Registra un nuevo usuario indicando si es administrador u operador
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -17,25 +17,36 @@ const { verificarToken } = require("./middlewares");
  *             type: object
  *             required:
  *               - nombre
- *               - email
+ *               - correo
  *               - password
+ *               - tipo_usuario
  *             properties:
  *               nombre:
  *                 type: string
- *                 example: Ruben Gonzalez
- *               email:
+ *                 example: Ruben
+ *               apellido:
+ *                 type: string
+ *                 example: Gonzalez Camargo
+ *               telefono:
+ *                 type: string
+ *                 example: "6441234567"
+ *               correo:
  *                 type: string
  *                 example: ruben@test.com
  *               password:
  *                 type: string
  *                 example: "123456"
+ *               tipo_usuario:
+ *                 type: string
+ *                 enum: [administrador, operador]
+ *                 example: operador
  *     responses:
  *       201:
  *         description: Usuario registrado correctamente
  *       400:
- *         description: Faltan datos o contraseña muy corta
+ *         description: Faltan datos, contraseña muy corta, o tipo_usuario inválido
  *       409:
- *         description: El email ya está registrado
+ *         description: El correo ya está registrado
  */
 router.post("/registro", registrar);
 
@@ -52,10 +63,10 @@ router.post("/registro", registrar);
  *           schema:
  *             type: object
  *             required:
- *               - email
+ *               - correo
  *               - password
  *             properties:
- *               email:
+ *               correo:
  *                 type: string
  *                 example: ruben@test.com
  *               password:
@@ -68,6 +79,8 @@ router.post("/registro", registrar);
  *         description: Faltan datos
  *       401:
  *         description: Credenciales inválidas
+ *       403:
+ *         description: Usuario inactivo
  */
 router.post("/login", login);
 
@@ -86,5 +99,52 @@ router.post("/login", login);
  *         description: Token no proporcionado o inválido
  */
 router.get("/perfil", verificarToken, perfil);
+
+/**
+ * @swagger
+ * /api/auth/usuarios/crear:
+ *   post:
+ *     summary: Crea un usuario con un rol específico (solo administradores)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nombre
+ *               - correo
+ *               - password
+ *               - id_rol
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               apellido:
+ *                 type: string
+ *               telefono:
+ *                 type: string
+ *               correo:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               id_rol:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       201:
+ *         description: Usuario creado correctamente
+ *       400:
+ *         description: Faltan datos
+ *       401:
+ *         description: Token no proporcionado o inválido
+ *       403:
+ *         description: No tienes permisos de administrador
+ *       409:
+ *         description: El correo ya está registrado
+ */
+router.post("/usuarios/crear", verificarToken, verificarAdmin, crearUsuarioConRol);
 
 module.exports = router;

@@ -4,9 +4,9 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
-const authRoutes = require("./routes");
+const authRoutes = require("./src/routes");
 const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./swagger");
+const swaggerSpec = require("./src/swagger");
 
 const app = express();
 
@@ -27,7 +27,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Ruta de prueba
 app.get("/", (req, res) => {
-  res.json({ mensaje: "API de login funcionando 🚀" });
+  res.json({ mensaje: "API FastParking funcionando 🚗" });
 });
 
 const PORT = process.env.PORT || 3000;
