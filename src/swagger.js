@@ -10,8 +10,8 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
-        description: "Servidor local",
+        url: "https://api-brindis.onrender.com/api-docs/",
+        description: "Api hosteada",
       },
       {
         url: "https://api-fastparking.onrender.com",
